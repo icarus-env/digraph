@@ -10,7 +10,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     # Only run this job if the previous jobs were successful
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.workflow == 'Linux' }}
 
     steps:
       - uses: actions/checkout@v4
