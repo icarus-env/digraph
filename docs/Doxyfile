@@ -1,0 +1,27 @@
+DOXYFILE_ENCODING      = UTF-8
+PROJECT_NAME           = "digraph"
+PROJECT_BRIEF          = "A C++ library for creating and analyzing directed graphs with string node IDs"
+AUTOLINK_SUPPORT       = NO
+INPUT                  = ../include
+FILE_PATTERNS          = *.h *.cpp
+RECURSIVE              = YES
+
+# Build related configuration options
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+
+# Generation file format(s)
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+GENERATE_XML           = NO
+
+# Setting the page appearance
+DISABLE_INDEX          = YES
+GENERATE_TREEVIEW      = YES
+
+# DOT settings for UML diagrams
+HAVE_DOT               = YES
+UML_LOOK               = YES
+DOT_UML_DETAILS        = NONE
+COLLABORATION_GRAPH    = NO
+TEMPLATE_RELATIONS     = YES

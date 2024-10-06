@@ -1,0 +1,28 @@
+name: Generate Documentation
+
+on:
+  workflow_run:
+    workflows: ["CMake on Windows", "CMake on Linux"]
+    types:
+      - completed
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    # Only run this job if the previous jobs were successful
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Doxygen
+        run: sudo apt-get install doxygen
+
+      - name: Generate Documentation
+        run: doxygen docs/Doxyfile
+
+      - name: Upload Documentation to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/html

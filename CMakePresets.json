@@ -1,0 +1,46 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build"
+    },
+    {
+      "name": "no_tests_debug",
+      "description": "[Debug] Without tests",
+      "displayName": "No tests (Debug)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "no_tests_release",
+      "description": "[Release] Without tests",
+      "displayName": "No tests (Release)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "tests_debug",
+      "inherits": "no_tests_debug",
+      "displayName": "Tests (Debug)",
+      "description": "[Debug] With tests",
+      "cacheVariables": {
+        "BUILD_TESTING": "ON"
+      }
+    },
+    {
+      "name": "tests_release",
+      "inherits": "no_tests_release",
+      "displayName": "Tests (Release)",
+      "description": "[Release] With tests",
+      "cacheVariables": {
+        "BUILD_TESTING": "ON"
+      }
+    }
+  ]
+}

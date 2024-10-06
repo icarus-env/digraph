@@ -1,0 +1,11 @@
+{
+  "name": "digraph",
+  "builtin-baseline": "3f530d4827b064f5894e94a8946473d40999826e",
+  "dependencies": [],
+  "features": {
+    "test": {
+      "description": "Build Tests",
+      "dependencies": [ "gtest" ]
+    }
+  }
+}

@@ -1,0 +1,123 @@
+name: Linux
+
+# Trigger only for pushes and pull requests on the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # =========================
+  # "build" job
+  # =========================
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      # Build using gcc and clang compilers
+      matrix:
+        compiler: [gcc, clang]
+    env:
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+    outputs:
+      build-dir: ${{ steps.strings.outputs.build-dir }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set reusable string outputs
+        id: strings
+        shell: bash
+        run: |
+          echo "build-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+      - name: Export cache environment variables of GitHub Actions
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      # Set the VCPKG_ROOT environment variable (required for the CMake configuration)
+      - name: Set VCPKG_ROOT
+        run: echo "VCPKG_ROOT=${VCPKG_INSTALLATION_ROOT}" >> $GITHUB_ENV
+
+      - name: Choose the right compiler
+        run: |
+          if [ "${{ matrix.compiler }}" == "clang" ]; then
+            export CC=clang
+            export CXX=clang++
+          fi
+
+      - name: CMake configure
+        run: cmake --preset "tests_release"
+
+      - name: CMake build
+        run: cmake --build ${{ steps.strings.outputs.build-dir }}
+
+      - name: Upload the build folder as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build_folder_${{ matrix.compiler }}
+          path: |
+            ${{ steps.strings.outputs.build-dir }}
+
+  # =========================
+  # "test" job
+  # =========================
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the build folder artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build_folder_${{ matrix.compiler }}
+          path: ${{ needs.build.outputs.build-dir }}
+
+      - name: Make test files executable
+        working-directory: ${{ needs.build.outputs.build-dir }}/bin
+        run: |
+          chmod +x digraph-tests
+
+      - name: Test
+        working-directory: ${{ needs.build.outputs.build-dir }}
+        run: |
+          ctest --output-on-failure
+
+      # =========================
+      # Test coverage
+      # =========================
+      - name: Install coverage tool (gcovr)
+        if: matrix.compiler == 'gcc'
+        run: |
+          sudo apt-get update
+          sudo apt-get install python3-pip cmake -y
+          pip3 install gcovr
+
+      - name: Generate coverage report
+        if: matrix.compiler == 'gcc'
+        working-directory: ${{ needs.build.outputs.build-dir }}
+        run: |
+          gcovr --xml-pretty -e '/.*/build/' -e '/.*/tests/' --exclude-unreachable-branches --print-summary -o coverage.xml -r ${{ github.workspace }}
+
+      - name: Upload coverage report
+        if: matrix.compiler == 'gcc'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ${{ needs.build.outputs.build-dir }}/coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: build/coverage.xml  # Path to your coverage file
+          flags: tests
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

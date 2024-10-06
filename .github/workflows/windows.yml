@@ -1,0 +1,72 @@
+name: Windows
+
+# Trigger only for pushes and pull requests on the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # =========================
+  # "build" job
+  # =========================
+  build:
+    runs-on: windows-latest
+    env:
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+    outputs:
+      build-dir: ${{ steps.strings.outputs.build-dir }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set reusable string outputs
+        id: strings
+        shell: bash
+        run: |
+          echo "build-dir=${{ github.workspace }}\build" >> "$GITHUB_OUTPUT"
+
+      - name: Export cache environment variables of GitHub Actions
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Set VCPKG_ROOT
+        run: echo "VCPKG_ROOT=$Env:VCPKG_INSTALLATION_ROOT" >> $Env:GITHUB_ENV
+
+      - name: CMake configure
+        run: cmake --preset "tests_release"
+
+      - name: CMake build
+        run: cmake --build ${{ steps.strings.outputs.build-dir }}
+
+      - name: Upload the build folder as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build_folder
+          path: |
+            ${{ steps.strings.outputs.build-dir }}
+
+  # =========================
+  # "test" job
+  # =========================
+  test:
+    needs: build
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the build folder artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build_folder
+          path: ${{ needs.build.outputs.build-dir }}
+
+      - name: Test
+        working-directory: ${{ needs.build.outputs.build-dir }}
+        run: |
+          ctest --output-on-failure
