@@ -1,8 +1,8 @@
-name: Generate Documentation
+name: Documentation
 
 on:
   workflow_run:
-    workflows: ["CMake on Windows", "CMake on Linux"]
+    workflows: ["Linux", "Windows"]
     types:
       - completed
 
@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Doxygen
+      - name: Install Doxygen
         run: sudo apt-get install doxygen
 
       - name: Generate Documentation
