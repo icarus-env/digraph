@@ -19,7 +19,9 @@ jobs:
         run: sudo apt-get install doxygen
 
       - name: Generate Documentation
-        run: doxygen docs/Doxyfile
+        run: |
+          cd docs    
+          doxygen Doxyfile
 
       - name: Upload Documentation to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
