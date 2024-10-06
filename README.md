@@ -1,12 +1,12 @@
 # DiGraph
 [![Linux CI Status](https://github.com/icarus-env/digraph/actions/workflows/linux.yml/badge.svg)](https://github.com/icarus-env/digraph/actions/workflows/linux.yml?query=workflow%3Alinux)
 [![Windows CI Status](https://github.com/icarus-env/digraph/actions/workflows/windows.yml/badge.svg)](https://github.com/icarus-env/digraph/actions/workflows/windows.yml?query=workflow%3Awindows)
+[![codecov](https://codecov.io/gh/icarus-env/digraph/graph/badge.svg?token=nCjYPy5rSt)](https://codecov.io/gh/icarus-env/digraph)
 
 DiGraph is a header only C++ library for creating and analyzing directed graphs with string node IDs.
+- **Documentation Website:** https://icarus-env.github.io/digraph/
 
 >**Note:** DiGraph has been initially developed to be used by the `icarus` library and is, subsequetly, strongly driven by its requirements.
-
-[Documentation Website](https://icarus-env.github.io/digraph/)
 
 **Table of Contents**
 - [Build from Source](#build-from-source)
