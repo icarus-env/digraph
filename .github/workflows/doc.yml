@@ -24,7 +24,7 @@ jobs:
   # =========================
   # "build" job
   # =========================
-  docs:
+  build:
     runs-on: ubuntu-latest
 
     steps:
