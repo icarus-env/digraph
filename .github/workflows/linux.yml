@@ -97,8 +97,6 @@ jobs:
       - name: Install coverage tool (gcovr)
         if: matrix.compiler == 'gcc'
         run: |
-          sudo apt-get update
-          sudo apt-get install python3-pip cmake -y
           pip3 install gcovr
 
       - name: Generate coverage report
@@ -117,7 +115,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          file: build/coverage.xml  # Path to your coverage file
+          files: build/coverage.xml  # Path to your coverage file
           exclude: tests
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
