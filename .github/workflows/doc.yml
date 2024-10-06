@@ -26,8 +26,6 @@ jobs:
   # =========================
   docs:
     runs-on: ubuntu-latest
-    # Only run this job if the previous jobs were successful
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -40,8 +38,8 @@ jobs:
           cd docs    
           doxygen Doxyfile
 
-      - name: Upload Documentation to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           publish_dir: ./docs/html
   
