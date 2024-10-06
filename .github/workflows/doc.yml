@@ -41,7 +41,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          publish_dir: ./docs/html
+          path: ./docs/html
   
   # =========================
   # "deploy" job
