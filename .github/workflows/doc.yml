@@ -2,7 +2,7 @@ name: Documentation
 
 on:
   workflow_run:
-    workflows: ["Linux", "Windows"]
+    workflows: ["Linux"]
     types:
       - completed
 
@@ -10,7 +10,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     # Only run this job if the previous jobs were successful
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.workflow == 'Linux' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/checkout@v4
