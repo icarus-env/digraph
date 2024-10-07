@@ -115,7 +115,8 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          files: build/coverage.xml  # Path to your coverage file
-          exclude: tests
+          # Upload the previously generated coverage report
+          files: ${{ needs.build.outputs.build-dir }}/coverage.xml
+          exclude: ${{ github.workspace }}/tests
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
