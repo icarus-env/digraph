@@ -117,8 +117,7 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           # Upload the previously generated coverage report
-          directory: ${{ needs.build.outputs.build-dir }}
-          files: ./coverage.xml
-          exclude: ${{ github.workspace }}/tests/
+          file: ${{ needs.build.outputs.build-dir }}/coverage.xml
+          #exclude: ${{ github.workspace }}/tests/
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
