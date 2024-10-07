@@ -118,6 +118,7 @@ jobs:
         with:
           # Upload the previously generated coverage report
           file: ${{ needs.build.outputs.build-dir }}/coverage.xml
+          disable_search: true
           #exclude: ${{ github.workspace }}/tests/
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
