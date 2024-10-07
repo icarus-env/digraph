@@ -16,7 +16,7 @@ endif()
 # Project Configuration
 # ========================================
 project(digraph
-        DESCRIPTION "A C++ library for creating and analyzing directed graphs with string node IDs.")
+        DESCRIPTION "A library for creating and analyzing directed graphs with string node IDs.")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -27,7 +27,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # ========================================
-# Library Configuration
+# Add component(s)
 # ========================================
 add_library(digraph INTERFACE)
 target_include_directories(digraph INTERFACE include)
@@ -46,9 +46,6 @@ if(BUILD_TESTING)
         set(DCMAKE_C_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} --coverage")
     endif()
 	
-    add_executable(digraph-tests
-                   "tests/main.cpp"
-                   "tests/graph_tests.cpp")
-    target_link_libraries(digraph-tests PRIVATE digraph GTest::gtest)
-    gtest_discover_tests(digraph-tests)
+    # Add test executable(s)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 endif()
