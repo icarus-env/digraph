@@ -113,12 +113,12 @@ jobs:
           path: ${{ needs.build.outputs.build-dir }}/coverage.xml
 
       - name: Upload coverage to Codecov
+        if: matrix.compiler == 'gcc'
         uses: codecov/codecov-action@v4
         with:
           # Upload the previously generated coverage report
           directory: ./${{ needs.build.outputs.build-dir }}/
           files: ./coverage.xml
           exclude: ./tests/
-          gcov: false
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
