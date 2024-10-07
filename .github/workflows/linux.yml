@@ -112,6 +112,9 @@ jobs:
           name: coverage-report
           path: ${{ needs.build.outputs.build-dir }}/coverage.xml
 
+      - name: List build directory
+        run: ls -R ${{ needs.build.outputs.build-dir }}
+
       - name: Upload coverage to Codecov
         if: matrix.compiler == 'gcc'
         uses: codecov/codecov-action@v4
@@ -119,6 +122,5 @@ jobs:
           # Upload the previously generated coverage report
           file: ${{ needs.build.outputs.build-dir }}/coverage.xml
           disable_search: true
-          #exclude: ${{ github.workspace }}/tests/
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
