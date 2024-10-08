@@ -27,25 +27,29 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # ========================================
+# Test configuration
+# ========================================
+if(BUILD_TESTING)
+    include(CTest)
+    find_package(GTest CONFIG REQUIRED)
+    include(GoogleTest)
+
+    # Code coverage is only supported by GCC
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        add_compile_options(--coverage)
+        add_link_options(--coverage)
+    endif()
+endif()
+
+# ========================================
 # Add component(s)
 # ========================================
 add_library(digraph INTERFACE)
 target_include_directories(digraph INTERFACE include)
 
 # =====================================
-# Test Configuration
+# Add test executable(s)
 # =====================================
 if(BUILD_TESTING)
-    include(CTest)
-    find_package(GTest CONFIG REQUIRED)
-    include(GoogleTest)
-	
-	# Code coverage is only supported by GCC
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-        set(DCMAKE_C_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} --coverage")
-    endif()
-	
-    # Add test executable(s)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 endif()
