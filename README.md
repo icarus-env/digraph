@@ -47,7 +47,8 @@ cmake --preset <preset_name>
 
 3. Build the project:
 ```bash
-cmake --build build
+# --config is required if using the multi-config generator MSBuild of Visual Studio.
+cmake --build build [--config <Debug/Release>]
 ```
 
 #### Integrate into Existing Project
@@ -66,7 +67,8 @@ target_link_libraries(<your_target> PRIVATE digraph)
 1. Build the project with tests (see [above](#build-as-standalone-project)).
 2. Run all tests using the CMake tool `ctest`:
 ```bash
-cd build && ctest --output-on-failure
+# --build-config is required if using the multi-config generator MSBuild of Visual Studio.
+cd build && ctest --output-on-failure [--build-config <Debug/Release>]
 ```
 
 3. **[Only for build with GCC] [optional]** Generate a coverage report using the Python tool `gcovr`:

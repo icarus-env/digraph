@@ -41,7 +41,8 @@ jobs:
         run: cmake --preset "tests_release"
 
       - name: CMake build
-        run: cmake --build ${{ steps.strings.outputs.build-dir }}
+        # # --config is needed because the default Windows generator is a multi-config generator (MSBuild).
+        run: cmake --build ${{ steps.strings.outputs.build-dir }} --config Release
 
       - name: Upload the build folder as artifact
         uses: actions/upload-artifact@v4
@@ -69,4 +70,5 @@ jobs:
       - name: Test
         working-directory: ${{ needs.build.outputs.build-dir }}
         run: |
-          ctest --output-on-failure
+          # --config is needed because the default Windows generator is a multi-config generator (MSBuild).
+          ctest --output-on-failure --build-config Release
