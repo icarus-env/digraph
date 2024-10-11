@@ -1,9 +1,10 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "digraph"
-PROJECT_BRIEF          = "A C++ library for creating and analyzing directed graphs with string node IDs"
+PROJECT_BRIEF          = "A library for creating and analyzing directed graphs with string node IDs"
 AUTOLINK_SUPPORT       = NO
-INPUT                  = ../include
-FILE_PATTERNS          = *.h *.cpp
+INPUT                  = ../include/ \
+						 examples/
+FILE_PATTERNS          = *.h *.cpp *.md
 RECURSIVE              = YES
 
 # Build related configuration options
