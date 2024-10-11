@@ -27,8 +27,8 @@ enum class DefaultEdgeType {};
  * @brief Simple directed graph (no loops, no multiple edges) with unique strings as node IDs.
  * 
  * @tparam VertexDataType Type of data stored in the vertices (saved as unique pointers).
- * @tparam EdgeType (optional) Enumeration representing the type of the edges, if needed.
- * @tparam EdgeDataType (optional) Type of data stored in the edges (saved as unique pointers).
+ * @tparam EdgeType [opt] Enumeration representing the type of the edges, if needed.
+ * @tparam EdgeDataType [opt] Type of data stored in the edges (saved as unique pointers).
  */
 template <typename VertexDataType, 
           typename EdgeType = DefaultEdgeType, 
@@ -123,7 +123,7 @@ public:
     int getNumEdges() const {
         int num_edges = 0;
         for (const auto& vertex_pair : vertices_) {
-            const auto& vertex = vertex_pair.second; // Access the Vertex object
+            const auto& vertex = vertex_pair.second; // Access the vertex object
             num_edges += vertex.getSuccessors().size();
         }
         return num_edges;
