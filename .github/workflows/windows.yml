@@ -41,34 +41,14 @@ jobs:
         run: cmake --preset "tests_release"
 
       - name: CMake build
-        # # --config is needed because the default Windows generator is a multi-config generator (MSBuild).
+        # --config is needed because the default Windows generator is a multi-config generator (MSBuild).
         run: cmake --build ${{ steps.strings.outputs.build-dir }} --config Release
 
-      - name: Upload the build folder as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build_folder
-          path: |
-            ${{ steps.strings.outputs.build-dir }}
-
-  # =========================
-  # "test" job
-  # =========================
-  test:
-    needs: build
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download the build folder artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build_folder
-          path: ${{ needs.build.outputs.build-dir }}
-
+      # -------------------------
+      # Test phase
+      # -------------------------
       - name: Test
-        working-directory: ${{ needs.build.outputs.build-dir }}
+        working-directory: ${{ steps.strings.outputs.build-dir }}
         run: |
           # --config is needed because the default Windows generator is a multi-config generator (MSBuild).
           ctest --output-on-failure --build-config Release

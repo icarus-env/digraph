@@ -1,0 +1,13 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "name": "digraph-tests.exe/GraphTests",
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "digraph-tests.exe (bin\\digraph-tests.exe)",
+      "args": [ "--gtest_filter=GraphTests.*" ]
+    }
+  ]
+}

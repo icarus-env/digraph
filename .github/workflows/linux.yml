@@ -18,11 +18,15 @@ jobs:
       matrix:
         compiler: [gcc, clang]
     env:
+      # Configure vcpkg to use the GitHub Actions cache
       VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
     outputs:
       build-dir: ${{ steps.strings.outputs.build-dir }}
 
     steps:
+      # -------------------------
+      # Build phase
+      # -------------------------
       - uses: actions/checkout@v4
 
       - name: Set reusable string outputs
@@ -38,7 +42,7 @@ jobs:
             core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-      # Set the VCPKG_ROOT environment variable (required for the CMake configuration)
+      # Set the VCPKG_ROOT environment variable (required for CMake configuration)
       - name: Set VCPKG_ROOT
         run: echo "VCPKG_ROOT=${VCPKG_INSTALLATION_ROOT}" >> $GITHUB_ENV
 
@@ -55,45 +59,14 @@ jobs:
       - name: CMake build
         run: cmake --build ${{ steps.strings.outputs.build-dir }}
 
-      - name: Upload the build folder as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build_folder_${{ matrix.compiler }}
-          path: |
-            ${{ steps.strings.outputs.build-dir }}
-
-  # =========================
-  # "test" job
-  # =========================
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        compiler: [gcc, clang]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download the build folder artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build_folder_${{ matrix.compiler }}
-          path: ${{ needs.build.outputs.build-dir }}
-
-      - name: Make test files executable
-        working-directory: ${{ needs.build.outputs.build-dir }}/bin
-        run: |
-          chmod +x digraph-tests
-
+      # -------------------------
+      # Test phase
+      # -------------------------
       - name: Test
-        working-directory: ${{ needs.build.outputs.build-dir }}
+        working-directory: ${{ steps.strings.outputs.build-dir }}
         run: |
           ctest --output-on-failure
 
-      # =========================
-      # Test coverage
-      # =========================
       - name: Install coverage tool (gcovr)
         if: matrix.compiler == 'gcc'
         run: |
@@ -101,26 +74,16 @@ jobs:
 
       - name: Generate coverage report
         if: matrix.compiler == 'gcc'
-        working-directory: ${{ needs.build.outputs.build-dir }}
+        working-directory: ${{ steps.strings.outputs.build-dir }}
         run: |
           gcovr --xml-pretty -e '/.*/build/' -e '/.*/tests/' --exclude-unreachable-branches --print-summary -o coverage.xml -r ${{ github.workspace }}
-
-      - name: Upload coverage report
-        if: matrix.compiler == 'gcc'
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: ${{ needs.build.outputs.build-dir }}/coverage.xml
-
-      - name: List build directory
-        run: ls -R ${{ needs.build.outputs.build-dir }}
 
       - name: Upload coverage to Codecov
         if: matrix.compiler == 'gcc'
         uses: codecov/codecov-action@v4
         with:
           # Upload the previously generated coverage report
-          file: ${{ needs.build.outputs.build-dir }}/coverage.xml
+          file: ${{ steps.strings.outputs.build-dir }}/coverage.xml
           disable_search: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

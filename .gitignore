@@ -40,8 +40,11 @@ install/
 vcpkg_installed/
 
 # Visual Studio & VSscode
-.vs/
-.vscode/
+.vs/*
+!.vs/launch.vs.json
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
 
 # Doxygen generated files
 html/
